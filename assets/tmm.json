@@ -1,0 +1,29 @@
+{ "height":100,
+ "hexsidelength":0,
+ "layers":[
+        {
+         "compression":"zlib",
+         "data":"eJztwTEBAAAAwqD1T+1lC6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAbnEAAAQ==",
+         "encoding":"base64",
+         "height":100,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":100,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"hexagonal",
+ "renderorder":"right-down",
+ "staggeraxis":"y",
+ "staggerindex":"odd",
+ "tiledversion":"1.0.3",
+ "tileheight":32,
+ "tilesets":[],
+ "tilewidth":32,
+ "type":"map",
+ "version":1,
+ "width":100
+}
