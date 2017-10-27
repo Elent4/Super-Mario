@@ -30,7 +30,7 @@ body {
 			this.load.spritesheet('tiles', 'assets/super_mario_tiles.png', 16,
 					16);
 			this.load.spritesheet('goomba', 'assets/goomba.png', 16, 16);
-			this.load.spritesheet('mario', 'assets/marionew.png', 16, 16);
+			this.load.spritesheet('mario', 'assets/marionew2.png', 16, 16);
 			this.load.spritesheet('coin', 'assets/coin.png', 16, 16);
 
 			this.load.tilemap('level', 'assets/super_mario_mmt.json', null,
@@ -44,7 +44,7 @@ body {
 			game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			game.physics.startSystem(Phaser.Physics.ARCADE);
 
-			game.stage.backgroundColor = '#5c94fc';
+			game.stage.backgroundColor = '#0c0e29';
 
 			map = game.add.tilemap('level');
 			map.addTilesetImage('tiles', 'tiles');
