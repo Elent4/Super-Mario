@@ -19,6 +19,11 @@ body {
 			create : create,
 			update : update
 		}, false, false);
+		var coinsound;
+		var doorsound;
+		var jumpsound;
+		var keysound;
+		var stompsound;
 
 		function preload() {
 
@@ -51,6 +56,12 @@ body {
 			map.setCollisionBetween(3, 12, true, 'solid');
 
 			map.createLayer('background');
+			
+			coinsound = new sound("audio/coin.wav");
+			doorsound = new sound("audio/door.wav");
+			jumpsound = new sound("audio/jump.wav");
+			keysound = new sound("audio/key.wav");
+			stompsound = new sound("audio/stomp.wav");
 
 			layer = map.createLayer('solid');
 			layer.resizeWorld();
@@ -135,6 +146,7 @@ body {
 				player.body.velocity.y = -80;
 				game.time.events.add(Phaser.Timer.SECOND, function() {
 					goomba.kill();
+					mySound.play();
 				});
 			} else {
 				player.frame = 6;
