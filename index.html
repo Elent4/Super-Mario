@@ -43,6 +43,13 @@ body {
 
 			this.load.tilemap('level', 'assets/super_mario_mmtm.json', null,
 					Phaser.Tilemap.TILED_JSON);
+			
+			this.load.audio("coin", "audio/coin.wav");
+			this.load.audio("door", "audio/door.wav");
+			this.load.audio("jump", "audio/jump.wav");
+			this.load.audio("key", "audio/key.wav");
+			this.load.audio("stomp", "audio/stomp.wav");
+
 		}
 
 		function create() {
@@ -98,6 +105,12 @@ body {
 
 			cursors = game.input.keyboard.createCursorKeys();
 			
+			this.coinSnd = this.add.audio('coin');
+			this.doorSnd = this.add.audio('door');
+			this.jumpSnd = this.add.audio('jump');
+			this.keySnd = this.add.audio('key');
+			this.stompSnd = this.add.audio('stomp');
+			
 			myScore = new component("30px", "Consolas", "white", 280, 40, "text");
 			
 			
@@ -152,6 +165,7 @@ body {
 				goomba.frame = 2;
 				goomba.body.enable = false;
 				player.body.velocity.y = -80;
+				this.stompSnd.play();
 				game.time.events.add(Phaser.Timer.SECOND, function() {
 					goomba.kill();
 				
