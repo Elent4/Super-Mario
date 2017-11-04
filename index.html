@@ -15,8 +15,6 @@ body {
 <body>
 	<script type="text/javascript">
 		
-		myScore = new component("30px", "Consolas", "black", 280, 40, "text");
-		
 		var game = new Phaser.Game(256, 240, Phaser.CANVAS, '', {
 			preload : preload,
 			create : create,
@@ -98,6 +96,8 @@ body {
 			game.camera.follow(player);
 
 			cursors = game.input.keyboard.createCursorKeys();
+			
+			myScore = new component("30px", "Consolas", "black", 280, 40, "text");
 		}
 
 		function update() {
