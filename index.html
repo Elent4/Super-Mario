@@ -98,7 +98,7 @@ body {
 
 			cursors = game.input.keyboard.createCursorKeys();
 			
-			<label id="lblScore">0</label>
+			
 		}
 
 		function update() {
@@ -140,7 +140,9 @@ body {
 		}
 
 		function coinOverlap(player, coin) {
+			score++; 
 			coin.kill();
+			
 		}
 
 		function goombaOverlap(player, goomba) {
