@@ -116,12 +116,10 @@ body {
 			
 		}
 		
-		function addscore () {
-			addScore: function (coinOverLap) {
+		function addscore (coinOverLap) {
 				coinOverLap.scored = true;
 				this.score += .5;
 				this.scoreText.setText("SCORE\n" + this.score);
-}
 		}
 
 		function update() {
