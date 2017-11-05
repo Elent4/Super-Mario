@@ -115,6 +115,13 @@ body {
 			
 			
 		}
+		
+		function addscore () {
+			addScore: function (coinOverLap) {
+				coin.scored = true;
+				this.score += .5;
+				this.scoreText.setText("SCORE\n" + this.score);
+}
 
 		function update() {
 			game.physics.arcade.collide(player, layer);
@@ -165,7 +172,6 @@ body {
 				goomba.frame = 2;
 				goomba.body.enable = false;
 				player.body.velocity.y = -80;
-				this.stompSnd.play();
 				game.time.events.add(Phaser.Timer.SECOND, function() {
 					goomba.kill();
 				
