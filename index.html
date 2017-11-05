@@ -109,7 +109,7 @@ body {
 			this.doorSnd = this.add.audio('door');
 			this.jumpSnd = this.add.audio('jump');
 			this.keySnd = this.add.audio('key');
-			this.stompSnd = this.add.audio('stomp');
+			goomba.stompSnd = this.add.audio('stomp');
 			
 			myScore = new component("30px", "Consolas", "white", 280, 40, "text");
 			
@@ -167,7 +167,7 @@ body {
 				player.body.velocity.y = -80;
 				game.time.events.add(Phaser.Timer.SECOND, function() {
 					goomba.kill();
-				this.stompSnd.play();
+				goomba.stompSnd.play();
 				
 				});
 			} else {
