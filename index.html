@@ -143,6 +143,8 @@ body {
 		
 		function coinOverlap(player, coin) {
 			coin.kill();
+			score = score + 1;
+            		tscore.text = "SCORE : " + score;
             		game.coinSnd.play();
 		}
         
