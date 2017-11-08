@@ -20,13 +20,16 @@ body {
 			create : create,
 			update : update
 		}, false, false);
-		
-		var score = 0;
+        	var score = 0;
 		var life = 3;
 		var bonus = 0;
+		var bg = 0;
 		var tscore;
 		var tlife;
 		var tbonus;
+        	var tbg;
+        	var info;
+        	var endinfo;
         
 		function preload() {
 			//  We need this because the assets are on github pages
@@ -34,12 +37,12 @@ body {
 			this.load.baseURL = 'https://Elent4.github.io/Super-Mario/';
 			this.load.crossOrigin = 'anonymous';
 			this.load.spritesheet('tiles', 'assets/super_mario_tiles.png', 16,
-					16);
+			16);
 			this.load.spritesheet('goomba', 'assets/goomba.png', 16, 16);
-			this.load.spritesheet('mario', 'assets/marionew.png', 16, 16);
-			this.load.spritesheet('coin', 'assets/coin.png', 16, 16);
-			this.load.tilemap('level', 'assets/super_mario_mmtm.json', null,
-					Phaser.Tilemap.TILED_JSON);
+			this.load.spritesheet('mario', 'assets/crashmariooo.png', 16, 16);
+			this.load.spritesheet('coin', 'assets/apples.png', 16, 16);
+			this.load.tilemap('level', 'assets/super_mario_maptm.json', null,
+			Phaser.Tilemap.TILED_JSON);
 			
 			this.load.audio("coin", "audio/coin.wav");
 			this.load.audio("door", "audio/door.wav");
@@ -48,7 +51,6 @@ body {
 			this.load.audio("stomp", "audio/stomp.wav");
             		this.load.audio("bac", "audio/SuperMarioSong.mp3");
 		}
-		
 		function create() {
 			Phaser.Canvas.setImageRenderingCrisp(game.canvas)
 			game.scale.pageAlignHorizontally = true;
@@ -67,13 +69,13 @@ body {
 			coins.enableBody = true;
 			map.createFromTiles(2, null, 'coin', 'stuff', coins);
 			coins.callAll('animations.add', 'animations', 'spin',
-					[ 0, 0, 1, 2 ], 3, true);
+			[ 0, 0, 1, 2 ], 3, true);
 			coins.callAll('animations.play', 'animations', 'spin');
 			goombas = game.add.group();
 			goombas.enableBody = true;
 			map.createFromTiles(1, null, 'goomba', 'stuff', goombas);
 			goombas.callAll('animations.add', 'animations', 'walk', [ 0, 1 ],
-					2, true);
+			2, true);
 			goombas.callAll('animations.play', 'animations', 'walk');
 			goombas.setAll('body.bounce.x', 1);
 			goombas.setAll('body.velocity.x', -20);
@@ -97,14 +99,23 @@ body {
             		game.bacSnd.play();
 			
 			tscore = game.add.text(16,16,'SCORE : 0',{fontSize:'8px', fill:'#FFFF00'});
-            		tbonus = game.add.text(76,16,'BONUS : 0 ',{fontSize:'8px', fill:'#FFFF00'});
-			tlife = game.add.text(136,16,'LIVES : 3',{fontSize:'8px', fill:'#FFFF00'});
 			tscore.fixedToCamera = true;
+            		tbonus = game.add.text(76,16,'BONUS : 0 ',{fontSize:'8px', fill:'#FFFF00'});
 			tbonus.fixedToCamera = true;
+			tlife = game.add.text(136,16,'LIVES : 3',{fontSize:'8px', fill:'#FFFF00'});
 			tlife.fixedToCamera = true;
-			
+            
+			tbg = game.add.text(189,16,'GOOMBAS : 0',{fontSize:'8px', fill:'#FFFF00'});
+			tbg.fixedToCamera = true;
+            
+           		info = game.add.text(75,46,' ',{fontSize:'8px',
+            		fill:'#FFFF00'});
+			info.fixedToCamera = true;
+            
+            		endinfo = game.add.text(70,46,'  ', {fontSize:'20px', fill:'#00FFFF'});
+            		endinfo.fixedToCamera = true;
 		}
-	
+		
 		function update() {
 			game.physics.arcade.collide(player, layer);
 			game.physics.arcade.collide(goombas, layer);
@@ -143,11 +154,11 @@ body {
 		
 		function coinOverlap(player, coin) {
 			coin.kill();
-			score = score + 1;
+            		score = score + 1;
             		tscore.text = "SCORE : " + score;
             		game.coinSnd.play();
 		}
-        
+		
 		function goombaOverlap(player, goomba) {
 			if (player.body.touching.down) {
 				goomba.animations.stop();
@@ -156,22 +167,66 @@ body {
 				player.body.velocity.y = -80;
                 		game.stompSnd.play();
 				game.time.events.add(Phaser.Timer.SECOND, function() {
-					goomba.kill();
-				
-				});
-			} 
-			else {
+				goomba.kill();
+                    		bg = bg + 1;
+            			tbg.text = "GOOMBAS : " + bg;
+                
+				if (bg == 5) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE"
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+                		}
+                		if (bg == 6) {
+                			info.text= " "
+				}
+                		if (bg == 10) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE"
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+				}
+                		if (bg == 11) {
+                			info.text= " "
+				}
+                		if (bg == 15) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE";
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+				}
+                		if (bg == 16) {
+                			info.text= " "
+				}
+                
+               		}); 
+			} else {
 				player.frame = 6;
+                		life = life - 1
+                		tlife.text= "LIVES : " + life;
+                		player.invincible=true;
 				player.body.enable = false;
 				player.animations.stop();
                 		game.doorSnd.play();
-                		game.bacSnd.pause();
-				game.time.events.add(Phaser.Timer.SECOND * 3, function() {
-					game.paused = true;
+                		game.time.events.add(Phaser.Timer.SECOND * 3 , function() {
+					if(life<=0){
+						game.bacSnd.pause();
+						game.paused = true;
+                        			endinfo.text= "GAME OVER"
+					}
+					else{
+						player.invincible= false ;
+						player.body.enable = true;
+						player.x = 16;
+						player.y = game.world.height - 48;
+					}
+				
 				});
 			}
 		}
-	</script>
-	
+	</script>	
 </body>
 </html>
