@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Super-Mario</title>
+<meta charset="utf-8">
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+}
+</style>
+<script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		
+		var game = new Phaser.Game(256, 240, Phaser.CANVAS, '', {
+			preload : preload,
+			create : create,
+			update : update
+		}, false, false);
+        	var score = 0;
+		var life = 3;
+		var bonus = 0;
+		var bg = 0;
+		var tscore;
+		var tlife;
+		var tbonus;
+        	var tbg;
+        	var info;
+        	var endinfo;
+            var tlevel;
+        
+		function preload() {
+			//  We need this because the assets are on github pages
+			//  Remove the next 2 lines if running locally
+			this.load.baseURL = 'https://Elent4.github.io/Super-Mario/';
+			this.load.crossOrigin = 'anonymous';
+			this.load.spritesheet('tiles', 'assets/Untitleda.png', 16,
+			16);
+			this.load.spritesheet('goomba', 'assets/goomba.png', 16, 16);
+			this.load.spritesheet('mario', 'assets/crashmariooo.png', 16, 16);
+			this.load.spritesheet('coin', 'assets/apples.png', 16, 16);
+            this.load.spritesheet('kanatas', 'assets/kanatas.png', 16, 16);
+			this.load.tilemap('level', 'assets/super_mario_lev9.json', null,
+			Phaser.Tilemap.TILED_JSON);
+			
+			this.load.audio("coin", "audio/coin.wav");
+			this.load.audio("door", "audio/door.wav");
+			this.load.audio("jump", "audio/jump.wav");
+			this.load.audio("key", "audio/key.wav");
+			this.load.audio("stomp", "audio/stomp.wav");
+            		this.load.audio("bac", "audio/CrashMarioSong.mp3");
+		}
+		function create() {
+			Phaser.Canvas.setImageRenderingCrisp(game.canvas)
+			game.scale.pageAlignHorizontally = true;
+			game.scale.pageAlignVertically = true
+			game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+			game.physics.startSystem(Phaser.Physics.ARCADE);
+			game.stage.backgroundColor = '#0c0e29';
+			map = game.add.tilemap('level');
+			map.addTilesetImage('tiles', 'tiles');
+			map.setCollisionBetween(3, 12, true, 'solid');
+			map.createLayer('background');
+            
+			layer = map.createLayer('solid');
+			layer.resizeWorld();
+			coins = game.add.group();
+			coins.enableBody = true;
+			map.createFromTiles(2, null, 'coin', 'stuff', coins);
+			coins.callAll('animations.add', 'animations', 'spin',
+			[ 0, 0, 1, 2 ], 3, true);
+			coins.callAll('animations.play', 'animations', 'spin');
+            
+            goombas = game.add.group();
+			goombas.enableBody = true;
+			map.createFromTiles(1, null, 'goomba', 'stuff', goombas);
+			goombas.callAll('animations.add', 'animations', 'walk', [ 0, 1 ],
+			2, true);
+			goombas.callAll('animations.play', 'animations', 'walk');
+			goombas.setAll('body.bounce.x', 1);
+			goombas.setAll('body.velocity.x', -20);
+			goombas.setAll('body.gravity.y', 500);
+            
+            kanatas = game.add.group();
+			kanatas.enableBody = true;
+			map.createFromTiles(8, null, 'kanatas', 'stuff', kanatas);
+			kanatas.callAll('animations.add', 'animations', 'walk', [ 0, 1 ],
+			2, true);
+			kanatas.callAll('animations.play', 'animations', 'walk');
+			kanatas.setAll('body.bounce.x', 1);
+			kanatas.setAll('body.velocity.x', -20);
+			kanatas.setAll('body.gravity.y', 500);
+            
+			player = game.add.sprite(16, game.world.height - 48, 'mario');
+			game.physics.arcade.enable(player);
+			player.body.gravity.y = 370;
+			player.body.collideWorldBounds = true;
+			player.animations.add('walkRight', [ 1, 2, 3 ], 10, true);
+			player.animations.add('walkLeft', [ 8, 9, 10 ], 10, true);
+			player.goesRight = true;
+			game.camera.follow(player);
+			cursors = game.input.keyboard.createCursorKeys();
+			
+			game.coinSnd = game.add.audio('coin');
+			game.doorSnd = game.add.audio('door');
+			game.jumpSnd = game.add.audio('jump');
+			game.keySnd = game.add.audio('key');
+			game.stompSnd = game.add.audio('stomp');
+            		game.bacSnd = game.add.audio('bac');
+            		game.bacSnd.play();
+			
+			tscore = game.add.text(16,16,'SCORE : 0',{fontSize:'8px', fill:'#FFFF00'});
+			tscore.fixedToCamera = true;
+            		tbonus = game.add.text(76,16,'BONUS : 0 ',{fontSize:'8px', fill:'#FFFF00'});
+			tbonus.fixedToCamera = true;
+			tlife = game.add.text(136,16,'LIVES : 3',{fontSize:'8px', fill:'#FFFF00'});
+			tlife.fixedToCamera = true;
+            
+			tbg = game.add.text(189,16,'GOOMBAS : 0',{fontSize:'8px', fill:'#FFFF00'});
+			tbg.fixedToCamera = true;
+            
+           		info = game.add.text(75,46,' ',{fontSize:'8px',
+            		fill:'#FFFF00'});
+			info.fixedToCamera = true;
+            
+            		endinfo = game.add.text(70,46,'  ', {fontSize:'20px', fill:'#00FFFF'});
+            		endinfo.fixedToCamera = true;
+                    
+                    tlevel = game.add.text(28,46,'  ', {fontSize:'20px', fill:'#00FFFF'});
+            		tlevel.fixedToCamera = true;
+		}
+		
+		function update() {
+			game.physics.arcade.collide(player, layer);
+			game.physics.arcade.collide(goombas, layer);
+            game.physics.arcade.collide(kanatas, layer);
+			game.physics.arcade.overlap(player, goombas, goombaOverlap);
+			game.physics.arcade.overlap(player, coins, coinOverlap);
+            game.physics.arcade.overlap(player, kanatas, kanatasOverlap);
+			if (player.body.enable) {
+				player.body.velocity.x = 0;
+				if (cursors.left.isDown) {
+					player.body.velocity.x = -90;
+					player.animations.play('walkLeft');
+					player.goesRight = false;
+				} else if (cursors.right.isDown) {
+					player.body.velocity.x = 90;
+					player.animations.play('walkRight');
+					player.goesRight = true;
+				} else {
+					player.animations.stop();
+					if (player.goesRight)
+						player.frame = 0;
+					else
+						player.frame = 7;
+				}
+				if (cursors.up.isDown && player.body.onFloor()) {
+					player.body.velocity.y = -190;
+                    			game.jumpSnd.play();
+					player.animations.stop();
+				}
+				if(player.body.onFloor() && cursors.down.isDown){
+					if(player.x > 27*16  && player.x< 28*16)
+				     		player.reset(59.5*16,9*16);
+                		
+                    if(player.x > 126*16  && player.x< 127*16)
+				     		tlevel.text= "LEVEL 1 COMPLETE";
+                		}
+				if (player.body.velocity.y != 0) {
+					if (player.goesRight)
+						player.frame = 5;
+					else
+						player.frame = 12;
+				}
+			}
+		}
+		
+		function coinOverlap(player, coin) {
+			coin.kill();
+            		score = score + 1;
+            		tscore.text = "SCORE : " + score;
+            		game.coinSnd.play();
+		}
+        
+		function kanatasOverlap(player, kanatas) {
+			if (player.body.touching) {
+				kanatas.animations.stop();
+				kanatas.frame = 2;
+				kanatas.body.enable = false;
+				player.body.velocity.y = -80;
+				player.frame = 6;
+                		life = life - 1
+                		tlife.text= "LIVES : " + life;
+                		player.invincible=true;
+				player.body.enable = false;
+				player.animations.stop();
+				game.time.events.add(Phaser.Timer.SECOND * 3 , function() {
+					if(life<=0){
+						game.bacSnd.pause();
+						game.paused = true;
+                        			endinfo.text= "GAME OVER"
+					}
+					else{
+						player.invincible= false ;
+						player.body.enable = true;
+						player.x = 16;
+						player.y = game.world.height - 48;
+					}
+				
+				});
+			}
+		}
+        
+		function goombaOverlap(player, goomba) {
+			if (player.body.touching.down) {
+				goomba.animations.stop();
+				goomba.frame = 2;
+				goomba.body.enable = false;
+				player.body.velocity.y = -80;
+                		game.stompSnd.play();
+				game.time.events.add(Phaser.Timer.SECOND, function() {
+				goomba.kill();
+                    		bg = bg + 1;
+            			tbg.text = "GOOMBAS : " + bg;
+                
+				if (bg == 5) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE"
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+                		}
+                		if (bg == 6) {
+                			info.text= " "
+				}
+                		if (bg == 10) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE"
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+				}
+                		if (bg == 11) {
+                			info.text= " "
+				}
+                		if (bg == 15) {
+           				life = life + 1
+                			tlife.text= "LIVES : " + life;
+                			info.text= "YOU WIN ONE LIFE";
+                			bonus = bonus + 1
+                			tbonus.text= "BONUS : " + bonus;
+				}
+                		if (bg == 16) {
+                			info.text= " "
+				}
+                
+               		}); 
+			} else {
+				player.frame = 6;
+                		life = life - 1
+                		tlife.text= "LIVES : " + life;
+                		player.invincible=true;
+				player.body.enable = false;
+				player.animations.stop();
+                		game.doorSnd.play();
+                		game.time.events.add(Phaser.Timer.SECOND * 3 , function() {
+					if(life<=0){
+						game.bacSnd.pause();
+						game.paused = true;
+                        			endinfo.text= "GAME OVER"
+					}
+					else{
+						player.invincible= false ;
+						player.body.enable = true;
+						player.x = 16;
+						player.y = game.world.height - 48;
+					}
+				
+				});
+			}
+		}
+	</script>	
+</body>
+</html>
