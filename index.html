@@ -162,7 +162,7 @@ body {
                     			game.jumpSnd.play();
 					player.animations.stop();
 				}
-				if(player.body.onFloor() && cursors.down.isDown && player.x > 27*16  && player.x< 28*16)
+				if(player.body.onFloor() && cursors.down.isDown && player.x > 27*16  && player.x< 28*16){
 				     		player.reset(59.5*16,9*16);
 				}
 				if(player.body.onFloor() && cursors.down.isDown){
